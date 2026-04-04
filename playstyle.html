@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hex Gomoku - Game Features</title>
+  <meta
+    name="description"
+    content="Hex Gomoku is a mobile abstract strategy game with local multiplayer, AI opponents, Elo profiles, move suggestions, board-size options, and a polished mobile-first interface."
+  >
+  <style>
+    :root {
+      --bg: #14110d;
+      --panel: #211b15;
+      --panel-soft: rgba(36, 29, 23, 0.92);
+      --line: rgba(219, 181, 101, 0.18);
+      --ink: #f5eee2;
+      --muted: #c8bcab;
+      --accent: #d6a646;
+      --accent-2: #f2cf86;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(214, 166, 70, 0.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(255, 220, 140, 0.08), transparent 24%),
+        linear-gradient(180deg, #191510 0%, #110e0b 100%);
+      line-height: 1.6;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: center;
+      background: linear-gradient(180deg, rgba(38, 30, 23, 0.96), rgba(27, 22, 17, 0.96));
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(214, 166, 70, 0.14);
+      color: var(--accent-2);
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .hero-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 14px 0 10px;
+    }
+
+    .hero-brand img {
+      width: 68px;
+      height: 68px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 228, 172, 0.28);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+      object-fit: cover;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.1rem, 5vw, 3.9rem);
+      line-height: 0.98;
+      color: #fff3db;
+    }
+
+    .lead {
+      margin: 16px 0 0;
+      color: var(--muted);
+      max-width: 62ch;
+      font-size: 1.05rem;
+    }
+
+    .hero-shot {
+      justify-self: center;
+      width: min(100%, 320px);
+      padding: 12px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255, 237, 203, 0.08), rgba(214, 166, 70, 0.06));
+      border: 1px solid rgba(255, 223, 165, 0.16);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+    }
+
+    .hero-shot img {
+      width: 100%;
+      display: block;
+      border-radius: 20px;
+      object-fit: cover;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .section {
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 24px 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      color: var(--accent-2);
+      font-size: 1.35rem;
+    }
+
+    .section p {
+      margin: 0 0 12px;
+      color: var(--muted);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .feature {
+      background: rgba(255, 250, 240, 0.03);
+      border: 1px solid rgba(255, 223, 165, 0.12);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .feature h3 {
+      margin: 0 0 8px;
+      color: #f7dfab;
+      font-size: 1.04rem;
+    }
+
+    .feature p {
+      margin: 0;
+      font-size: 0.96rem;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 0 0 8px;
+      color: var(--muted);
+    }
+
+    .callout {
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(214, 166, 70, 0.08);
+      border: 1px solid rgba(214, 166, 70, 0.18);
+      color: var(--muted);
+    }
+
+    .footer {
+      margin-top: 16px;
+      color: #aa9d89;
+      text-align: center;
+      font-size: 0.92rem;
+    }
+
+    a {
+      color: #f2cf86;
+    }
+
+    @media (max-width: 920px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-grid,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        padding: 16px 12px 40px;
+      }
+
+      .hero,
+      .section {
+        padding: 18px 16px;
+        border-radius: 22px;
+      }
+
+      .hero-brand img {
+        width: 56px;
+        height: 56px;
+        border-radius: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Abstract Strategy • Mobile Board Game</div>
+        <div class="hero-brand">
+          <img src="assets/hex_gomoku_logo_512.png" alt="Hex Gomoku app logo">
+          <div>
+            <h1>Hex Gomoku</h1>
+          </div>
+        </div>
+        <p class="lead">
+          Hex Gomoku is a polished strategy board game built for players who enjoy tactical depth,
+          clean presentation, and meaningful long-term progression. It combines local multiplayer,
+          AI opponents, Elo-based profiles, customizable game settings, and optional training tools
+          in a mobile-first experience designed for both quick sessions and more serious play.
+        </p>
+      </div>
+
+      <div class="hero-shot">
+        <img src="assets/hex_gomoku_gameplay.jpg" alt="Hex Gomoku gameplay screenshot">
+      </div>
+    </section>
+
+    <div class="layout">
+      <section class="section">
+        <h2>Core Features</h2>
+        <div class="feature-grid">
+          <article class="feature">
+            <h3>Hex-Based Tactical Gameplay</h3>
+            <p>
+              A clean abstract strategy experience focused on board control, pattern recognition,
+              spatial planning, and tactical counterplay instead of luck-driven mechanics.
+            </p>
+          </article>
+
+          <article class="feature">
+            <h3>Local Multiplayer and Solo Play</h3>
+            <p>
+              Supports human-vs-human matches on one device, human-vs-AI games, and AI-vs-AI setups
+              for experimentation, observation, and balance tuning.
+            </p>
+          </article>
+
+          <article class="feature">
+            <h3>Multiple AI Skill Levels</h3>
+            <p>
+              Includes several AI tiers ranging from entry-level training opponents up to stronger
+              premium challenge levels for advanced players.
+            </p>
+          </article>
+
+          <article class="feature">
+            <h3>Elo-Based Player Profiles</h3>
+            <p>
+              Human players can use named profiles with Elo ratings, rating deltas, win/loss stats,
+              draw tracking, and match history for long-term progression.
+            </p>
+          </article>
+
+          <article class="feature">
+            <h3>Move Suggestions and Study Tools</h3>
+            <p>
+              Optional move suggestions help players review positions, learn better decisions, and
+              turn regular matches into a more educational training experience.
+            </p>
+          </article>
+
+          <article class="feature">
+            <h3>Flexible Board Sizes</h3>
+            <p>
+              Different board radii support both faster tactical sessions and broader strategic
+              battles, with larger boards available on supported devices.
+            </p>
+          </article>
+
+          <article class="feature">
+            <h3>Full Match Control</h3>
+            <p>
+              Undo, redo, move logging, game sharing, and status feedback make it easy to analyze
+              decisions, revisit lines, and continue learning after each match.
+            </p>
+          </article>
+
+          <article class="feature">
+            <h3>Theme and Interface Options</h3>
+            <p>
+              A polished mobile UI with theme settings, responsive layout behavior, and touch-first
+              controls keeps the experience readable and comfortable during long sessions.
+            </p>
+          </article>
+
+          <article class="feature">
+            <h3>Premium Expansion Path</h3>
+            <p>
+              Premium expands the game with stronger AI opponents, move suggestions, ad-free play,
+              and additional board-size access on supported devices.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Why It Stands Out</h2>
+        <div class="two-col">
+          <div>
+            <p>
+              Hex Gomoku is not built around random rewards or noisy arcade loops. Its strength is a
+              thoughtful blend of elegant strategy mechanics and player-friendly usability.
+            </p>
+            <ul>
+              <li>Quick to understand, but deep enough for repeated competitive play.</li>
+              <li>Suitable for both casual offline matches and deliberate skill improvement.</li>
+              <li>Built-in progression gives repeated play a sense of continuity and mastery.</li>
+              <li>AI and training features support both experimentation and structured learning.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Short website summary:</strong><br>
+            Hex Gomoku is a modern mobile abstract strategy game featuring local multiplayer,
+            multiple AI difficulty levels, Elo-based player profiles, move suggestions, board-size
+            options, and a polished interface designed for thoughtful, skill-based play.
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Useful Links</h2>
+        <p>
+          If you are hosting this together with your existing policy page, you can also link to your
+          privacy information here:
+          <a href="index.html">Privacy Policy</a>
+        </p>
+      </section>
+    </div>
+
+    <p class="footer">Hex Gomoku feature overview page</p>
+  </main>
+</body>
+</html>
